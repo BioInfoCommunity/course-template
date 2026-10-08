@@ -1,0 +1,427 @@
+<html lang="en" dir="ltr">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	{% assign lang = page.path | split: '/' | first %}
+	{% assign t = site.data[lang] | default: site.data['en'] %}
+	{% assign course_slug = t.course.slug %}
+	<title>{{ t.course.title }} | EMBL-EBI Training</title>
+	<link rel="stylesheet" href="https://assets.emblstatic.net/vf/v2.5.25/css/styles.css" type="text/css">
+
+	<link rel="stylesheet" href="https://ebi.emblstatic.net/web_guidelines/EBI-Icon-fonts/v1.3/fonts.css" type="text/css"
+		media="all" />
+	<style>
+		#ebi-hero-background {
+			background-image: url('https://acxngcvroo.cloudimg.io/v7/www.embl.org/files/wp-content/uploads/Online-tutorial.jpg');
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+
+		.vf-pagination__item {
+			align-self: center;
+			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			margin: 0 8px;
+			padding: 0px;
+			position: relative;
+		}
+
+		.vf-pagination__item--previous-page {
+			flex-direction: row-reverse;
+		}
+
+		.vf-pagination__item .vf-pagination__link {
+			align-self: center;
+			display: table;
+		}
+
+		.vf-pagination__item svg {
+			flex-grow: 1;
+			fill: #d0d0ce;
+			min-width: 40px;
+			max-width: 40px;
+			margin-left: 5px;
+			margin-right: 5px;
+			display: table-cell;
+		}
+	</style>
+</head>
+
+<body class="vf-body">
+	<div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+		<span data-protection-message-disable="true"></span>
+		<header id="masthead-black-bar" class="clearfix masthead-black-bar | ebi-header-footer vf-content vf-u-fullbleed">
+		</header>
+		<div class="layout-container">
+			<main class="page-content clearfix" role="main">
+				<div class="visually-hidden">
+					<a id="main-content" tabindex="-1">
+					</a>
+				</div>
+
+				{% if t.languages.size > 1 %}
+				<nav>
+					{% for language in t.languages %}
+					<a href="/{{ course_slug }}/{{ language.code }}/">{{ language.name }}</a>{% unless forloop.last %} |{% endunless %}
+					{% endfor %}
+				</nav>
+				{% endif %}
+				<div class="vf-content">
+					<div>
+						<div id="block-ebi-academy-content--89">
+							<div id="ebi-hero-background" style="">
+								<div class="vf-body">
+									<section class="vf-hero | vf-u-fullbleed" style="background:none;">
+										<div class="vf-hero__content | vf-box | vf-stack vf-stack--400" style="min-width:350px">
+											<p class="vf-hero__kicker" style="text-transform:uppercase">{{ t.course.hero_kicker_text }}</p>
+											<h2 id="course_title" class="vf-hero__heading">{{ t.course.title }}</h2>
+											<p class="vf-hero__subheading">{{ t.course.subtitle }}</p>
+										</div>
+									</section>
+								</div>
+							</div>
+							<article data-history-node-id="2555" role="article">
+								<div data-history-node-id="2555" role="article">
+									<div class="vf-body published">
+										<div class="vf-u-margin__top--500"></div>
+										<section class="embl-grid">
+											<div class="embl-training__sidebar">
+												<div class="vf-u-margin__top--500"></div>
+												<figure class="vf-figure ebi-academy-book-cover-image">
+
+													<img class="vf-figure__image"
+														src="{{ t.course.image }}" alt="">
+
+												</figure>
+												<div class="vf-u-margin__top--500"></div>
+												<p class="vf-u-type__text-body--3 vf-u-margin--0">
+													{{ t.labels.time_to_complete_text }}: </p>
+												<p class="vf-u-type__text-body--3 vf-u-margin--0">{{ t.labels.time_to_complete_value }}</p>
+												</p>
+												<hr class="vf-divider vf-u-margin__bottom-md">
+												<p class="vf-u-type__text-body--3 vf-u-margin--0 vf-u-margin__bottom--xs">
+													{{ t.labels.written_by_text }}:</p>
+												<div class="vf-u-margin__top--100"></div>
+												<ul class="vf-list vf-list--compact vf-u-margin__bottom-md">
+													{% assign lang = page.path | split: '/' | first %}
+													{% assign t = site.data[lang] | default: site.data['en'] %}
+
+													{% for author in t.labels.written_by_name %}
+													<li class="vf-list__item">
+														{% if author.profile_url %}
+														<a class="vf-link vf-link--primary vf-u-type__text-body--3" href="{{ author.profile_url }}">
+															{{ author.name }}
+														</a>
+														{% else %}
+														{{ author.name }}
+														{% endif %}
+													</li>
+													{% endfor %}
+												</ul>
+												{% if t.labels.translated_by_text %}
+												<p class="vf-u-type__text-body--3 vf-u-margin--0 vf-u-margin__bottom--xs">
+													{{ t.labels.translated_by_text }}:</p>
+												<div class="vf-u-margin__top--100"></div>
+
+												<ul class="vf-list vf-list--compact vf-u-margin__bottom-md">
+													{% assign lang = page.path | split: '/' | first %}
+													{% assign t = site.data[lang] | default: site.data['en'] %}
+
+													{% for translator in t.labels.translated_by_name %}
+													<li class="vf-list__item">
+														{% if translator.profile_url %}
+														<a class="vf-link vf-link--primary vf-u-type__text-body--3"
+															href="{{ translator.profile_url }}">
+															{{ translator.name }}
+														</a>
+														{% else %}
+														{{ translator.name }}
+														{% endif %}
+													</li>
+													{% endfor %}
+												</ul>
+												{% endif %}
+
+												{% if t.labels.translated_on_text %}
+												<p class="vf-u-type__text-body--3 vf-u-margin--0 vf-u-margin__bottom-md">
+													{{ t.labels.translated_on_text }}: {{ t.labels.translated_on_value }}</p>
+												</p>
+												{% endif %}
+												<p class="vf-u-type__text-body--3 vf-u-margin--0 vf-u-margin__bottom-md">
+													{{ t.labels.last_updated_text }}: {{ t.labels.last_updated_value }}</p>
+												</p>
+												<div class="vf-u-margin__top--500"></div>
+												<hr class="vf-divider vf-u-margin__bottom-md">
+												<!-- Navigation -->
+												{% assign lang = page.path | split: '/' | first %}
+												{% assign t = site.data[lang] | default: site.data['en'] %}
+
+												<div class="vf-tree" data-vf-js-tree aria-expanded="true"
+													data-vf-js-button-hidden-open-text="Open Tree"
+													data-vf-js-button-hidden-close-text="Close Tree" style="height:auto">
+													<div class="vf-tree__inner">
+														<ul class="vf-tree__list vf-tree__list--1 | vf-list" aria-role="tree">
+
+															<!-- Course overview -->
+															<li class="vf-tree__item">
+																<a class="vf-tree__link" href="/{{ course_slug }}/{{ lang }}/">
+																	{{ t.course.title }}
+																</a>
+															</li>
+															<!-- {% assign nav = site.data.navigation.navigation %} -->
+															{% assign lang = page.path | split: '/' | first %}
+															{% assign nav = site.data.navigation.navigation[lang] | default:
+															site.data.navigation.navigation['en'] %}
+
+															{% for section in nav %}
+															<li class="vf-tree__item" data-vf-js-tree--collapsed="true" data-vf-js-tree
+																aria-role="treeitem" aria-expanded="">
+																<a class="vf-tree__link" href="/{{ course_slug }}{{ section.url }}">
+																	{{ section.title }}
+																	{% if section.children %}
+																	<button class="vf-button vf-tree__button" data-vf-js-tree--button>
+																		<p data-vf-js-tree-button-hidden-text class="vf-u-sr-only">
+																			Open Tree
+																		</p>
+																		<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+																			<path
+																				d="M19.5,12a2.3,2.3,0,0,1-.78,1.729L7.568,23.54a1.847,1.847,0,0,1-2.439-2.773l9.752-8.579a.25.25,0,0,0,0-.376L5.129,3.233A1.847,1.847,0,0,1,7.568.46l11.148,9.808A2.31,2.31,0,0,1,19.5,12Z" />
+																		</svg>
+																	</button>
+																	{% endif %}
+																</a>
+
+																{% if section.children %}
+																<ul class="vf-tree__list vf-tree__list--additional vf-tree__list--2 | vf-list"
+																	aria-role="group">
+																	{% for child in section.children %}
+																	<li class="vf-tree__item" data-vf-js-tree--collapsed="true" data-vf-js-tree
+																		aria-role="treeitem" aria-expanded="">
+																		<a class="vf-tree__link" href="/{{ course_slug }}{{ child.url }}">
+																			{{ child.title }}
+																			{% if child.children %}
+																			<button class="vf-button vf-tree__button" data-vf-js-tree--button>
+																				<p data-vf-js-tree-button-hidden-text class="vf-u-sr-only">
+																					Open Tree
+																				</p>
+																				<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+																					<path
+																						d="M19.5,12a2.3,2.3,0,0,1-.78,1.729L7.568,23.54a1.847,1.847,0,0,1-2.439-2.773l9.752-8.579a.25.25,0,0,0,0-.376L5.129,3.233A1.847,1.847,0,0,1,7.568.46l11.148,9.808A2.31,2.31,0,0,1,19.5,12Z" />
+																				</svg>
+																			</button>
+																			{% endif %}
+																		</a>
+
+																		{% if child.children %}
+																		<ul class="vf-tree__list vf-tree__list--additional vf-tree__list--3 | vf-list"
+																			aria-role="group">
+																			{% for subchild in child.children %}
+																			<li class="vf-tree__item" data-vf-js-tree--collapsed="true" data-vf-js-tree
+																				aria-role="treeitem" aria-expanded="">
+																				<a class="vf-tree__link" href="/{{ course_slug }}{{ subchild.url }}">
+																					{{ subchild.title }}
+																				</a>
+																			</li>
+																			{% endfor %}
+																		</ul>
+																		{% endif %}
+
+																	</li>
+																	{% endfor %}
+																</ul>
+																{% endif %}
+
+															</li>
+															{% endfor %}
+														</ul>
+													</div>
+												</div>
+												<hr class="vf-divider vf-u-margin__bottom-md">
+												<p>
+													<a href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons"
+															src="http://trainingcontent.embl.org/themes/custom/ebi_academy/images/CC_BY.png"
+															style="width: 125px; height: 44px;" width="125" height="44"></a>
+												</p>
+												<p class="vf-u-type__text-body--3">
+													{% if t.labels.license_html %}
+													{{ t.labels.license_html }}
+													{% else %}
+													All materials are free cultural works licensed under a Creative Commons
+													<a href="https://creativecommons.org/licenses/by/4.0/"
+														class="vf-link vf-link--primary  vf-u-margin--0" style="display:inline">Attribution 4.0
+														International (CC BY 4.0) license</a>, except where further licensing details are provided.
+													{% endif %}
+												</p>
+												<div class="vf-u-margin__top--500"></div>
+												<hr class="vf-divider vf-u-margin__bottom-md">
+
+
+											</div>
+											<!-- Sidebar end -->
+											<div class="acc">
+												<div class="vf-u-margin__top--500"></div>
+												{{ content }}
+
+												<!-- Navigation Links for Next/Previous Pages -->
+												<div class="vf-u-margin__top--1600"></div>
+												<nav class="vf-pagination" role="navigation" aria-label="Pagination">
+													<ul class="vf-pagination__list">
+														{% assign lang = page.path | split: '/' | first %}
+														{% assign nav = site.data.navigation.navigation[lang] | default:
+														site.data.navigation.navigation['en'] %}
+
+														{% assign current_url = '/' | append: course_slug | append: page.url %}
+														{% assign prev_item = nil %}
+														{% assign next_item = nil %}
+														{% assign found_current = false %}
+
+														<!-- Iterate through all pages to find previous and next -->
+														{% assign course_url = '/' | append: course_slug %}
+
+														<!-- Check course home page -->
+														{% assign home_url = course_url | append: '/' | append: lang | append: '/' %}
+														{% if current_url == home_url %}
+														{% assign found_current = true %}
+														{% assign next_item = nav[0] %}
+														{% assign next_url = course_url | append: nav[0].url %}
+														{% assign next_title = nav[0].title %}
+														{% else %}
+														<!-- Default previous is the course home page, overwritten below if there is an earlier item -->
+														{% assign prev_item = true %}
+														{% assign prev_url = home_url %}
+														{% assign prev_title = t.course.title %}
+														<!-- Check all sections and children -->
+														{% for section in nav %}
+														{% if found_current == false %}
+														{% assign section_url = course_url | append: section.url %}
+
+														{% if current_url == section_url or current_url == section_url | append: '/' %}
+														{% assign found_current = true %}
+														{% else %}
+														{% assign prev_item = section %}
+														{% assign prev_url = section_url %}
+														{% assign prev_title = section.title %}
+														{% endif %}
+														{% elsif found_current == true and next_item == nil %}
+														{% assign next_item = section %}
+														{% assign next_url = course_url | append: section.url %}
+														{% assign next_title = section.title %}
+														{% endif %}
+
+														<!-- Check child items -->
+														{% if section.children %}
+														{% for child in section.children %}
+														{% if found_current == false %}
+														{% assign child_url = course_url | append: child.url %}
+
+														{% if current_url == child_url or current_url == child_url | append: '/' %}
+														{% assign found_current = true %}
+														{% else %}
+														{% assign prev_item = child %}
+														{% assign prev_url = child_url %}
+														{% assign prev_title = child.title %}
+														{% endif %}
+														{% elsif found_current == true and next_item == nil %}
+														{% assign next_item = child %}
+														{% assign next_url = course_url | append: child.url %}
+														{% assign next_title = child.title %}
+														{% endif %}
+
+														<!-- Check grandchild items -->
+														{% if child.children %}
+														{% for subchild in child.children %}
+														{% if found_current == false %}
+														{% assign subchild_url = course_url | append: subchild.url %}
+
+														{% if current_url == subchild_url or current_url == subchild_url | append: '/' %}
+														{% assign found_current = true %}
+														{% else %}
+														{% assign prev_item = subchild %}
+														{% assign prev_url = subchild_url %}
+														{% assign prev_title = subchild.title %}
+														{% endif %}
+														{% elsif found_current == true and next_item == nil %}
+														{% assign next_item = subchild %}
+														{% assign next_url = course_url | append: subchild.url %}
+														{% assign next_title = subchild.title %}
+														{% endif %}
+														{% endfor %}
+														{% endif %}
+														{% endfor %}
+														{% endif %}
+														{% endfor %}
+														{% endif %}
+
+														<!-- Display Previous and Next links -->
+														{% if prev_item %}
+														<li
+															class="vf-pagination__item vf-pagination__item--previous-page | vf-u-border-color--grey--lightest">
+															<a href="{{ prev_url }}" class="vf-pagination__link" style="display: table;">
+																<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+																	style="display: table-cell;">
+																	<title>navigation-left-circle-1_1</title>
+																	<path
+																		d="M24,12A12,12,0,1,0,12,24,12.013,12.013,0,0,0,24,12ZM10.293,17.2l-4.5-4.5a1,1,0,0,1,0-1.414l4.5-4.5a1,1,0,1,1,1.414,1.414L9.341,10.571A.25.25,0,0,0,9.518,11H18a1,1,0,0,1,0,2H9.518a.25.25,0,0,0-.177.426l2.366,2.367A1,1,0,0,1,10.293,17.2Z">
+																	</path>
+																</svg>
+																<span class="vf-u-type__text-body--2 vf-u-margin--0"
+																	style="display: table-cell; vertical-align: top;">{{ prev_title }}</span>
+															</a>
+														</li>
+														{% endif %}
+
+														{% if next_item %}
+														<li
+															class="vf-pagination__item vf-pagination__item--next-page | vf-u-border-color--grey--lightest">
+															<a href="{{ next_url }}" class="vf-pagination__link" style="display: table;">
+																<span class="vf-u-type__text-body--2 vf-u-margin--0"
+																	style="display: table-cell; vertical-align: top;">{{ next_title }}</span>
+																<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+																	style="display: table-cell;">
+																	<title>navigation-right-circle-1_1</title>
+																	<path
+																		d="M0,12A12,12,0,1,0,12,0,12.014,12.014,0,0,0,0,12ZM13.707,6.791l4.5,4.5a1,1,0,0,1,0,1.414l-4.5,4.5a1,1,0,0,1-1.414-1.414l2.366-2.367A.25.25,0,0,0,14.482,13H6a1,1,0,1,1,0-2h8.482a.25.25,0,0,0,.177-.427L12.293,8.205a1,1,0,0,1,1.414-1.414Z">
+																	</path>
+																</svg>
+															</a>
+														</li>
+														{% endif %}
+											</div>
+											</nav>
+									</div>
+									</section>
+								</div>
+						</div>
+						</article>
+					</div>
+				</div>
+		</div>
+		</main>
+		<script src="https://assets.emblstatic.net/vf/v2.5.25/scripts/scripts.js"></script>
+	</div>
+
+	</div>
+	<footer class="vf-footer vf-minimal-footer  | vf-u-background-color-ui--dark-grey">
+		<div class="vf-footer__inner">
+			<div class="vf-minimal-footer__intro">
+				<a href="https://www.ebi.ac.uk" class="vf-logo">
+					<img class="vf-logo__image"
+						src="https://stable.visual-framework.dev/assets/vf-minimal-footer/assets/embl-ebi-rgb-all-white.png"
+						alt="EMBL-EBI Logo" loading="eager">
+				</a>
+				<p class="vf-footer__notice">BioInfoTraining-Community - A community driven collaborative platform where members
+					can contribute to the translations of the existing content or submit their specific use cases.</p>
+			</div>
+			<section class="vf-footer__legal vf-grid__col--span-all | vf-grid vf-grid__col-1">
+				<span class="vf-footer__link vf-u-text-color--grey--lightest">Copyright © BioInfoTraining-Community</span>
+				<a class="vf-footer__link vf-u-text-color--white" href="JavaScript:Void(0);">Terms of use</a>
+				<a class="vf-footer__link vf-u-text-color--grey--lightest" href="JavaScript:Void(0);">Contact</a>
+			</section>
+		</div>
+	</footer>
+</body>
+
+</html>

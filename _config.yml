@@ -1,0 +1,26 @@
+# Base config shared by all courses. A course can override values
+# (title, description, url) with its own _config.yml.
+baseurl: ""
+
+markdown: kramdown
+theme: null
+
+permalink: pretty
+
+# Build settings
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+
+# Collections (optional if needed later)
+collections:
+  pages:
+    output: true
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default

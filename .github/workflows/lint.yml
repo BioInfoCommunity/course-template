@@ -1,0 +1,71 @@
+name: Lint PR
+
+on:
+  workflow_call:
+    inputs:
+      template_ref:
+        description: course-template branch or tag to lint with
+        required: false
+        type: string
+        default: main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout course-template
+        uses: actions/checkout@v4
+        with:
+          repository: BioInfoCommunity/course-template
+          ref: ${{ inputs.template_ref }}
+          path: .course-template
+
+      - name: Get changed files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+
+          git diff --name-status \
+            ${{ github.event.pull_request.base.sha }} \
+            ${{ github.event.pull_request.head.sha }} \
+            > changed_files.txt
+
+          echo "Changed files:"
+          cat changed_files.txt || echo "EMPTY"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run Lint
+        run: python .course-template/scripts/lint.py
+
+      - name: Comment PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let report = "No report generated.";
+            try {
+              report = fs.readFileSync('report.txt', 'utf8');
+            } catch (e) {
+              report = "❌ Lint report missing.";
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });

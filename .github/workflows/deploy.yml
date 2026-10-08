@@ -1,0 +1,109 @@
+name: Build and Deploy Jekyll Site
+
+on:
+  workflow_call:
+    inputs:
+      lang:
+        description: Language folder to publish (en, pt, es, ...)
+        required: true
+        type: string
+      template_ref:
+        description: course-template branch or tag to build with
+        required: false
+        type: string
+        default: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ----------------------------
+      # Checkout course content + shared template
+      # ----------------------------
+      - name: Checkout course
+        uses: actions/checkout@v4
+        with:
+          path: course
+
+      - name: Checkout course-template
+        uses: actions/checkout@v4
+        with:
+          repository: BioInfoCommunity/course-template
+          ref: ${{ inputs.template_ref }}
+          path: template
+
+      # ----------------------------
+      # Prepare unified structure
+      # ----------------------------
+      - name: Prepare site folder
+        run: |
+          mkdir -p site/_data site/${{ inputs.lang }}
+          rsync -av \
+            --exclude="_data" --exclude=".git" --exclude=".github" \
+            --exclude="_config.yml" --exclude="README.md" \
+            --exclude="scripts" --exclude="*.py" \
+            course/ site/${{ inputs.lang }}/
+          cp course/_data/*.yml site/_data/
+
+      # ----------------------------
+      # Generate navigation inside site folder
+      # ----------------------------
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node dependencies
+        run: |
+          npm init -y
+          npm install js-yaml
+
+      - name: Generate navigation
+        run: |
+          cd site
+          node ../template/scripts/generateNavigation.js
+
+      # ----------------------------
+      # Copy config + layouts from the template
+      # A course _config.yml (title, description, url) overrides the base one
+      # ----------------------------
+      - name: Copy config + layouts
+        run: |
+          cp template/_config.yml site/
+          if [ -f course/_config.yml ]; then cp course/_config.yml site/_config.course.yml; fi
+          mkdir -p site/_layouts
+          cp -r template/_layouts/* site/_layouts/
+
+      - name: Create Gemfile
+        run: |
+          cat <<EOF > site/Gemfile
+          source "https://rubygems.org"
+          gem "jekyll", "~> 4.3"
+          EOF
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+          working-directory: site
+
+      - name: Build site
+        run: |
+          cd site
+          CONFIG=_config.yml
+          if [ -f _config.course.yml ]; then CONFIG="$CONFIG,_config.course.yml"; fi
+          bundle exec jekyll build --trace --config "$CONFIG"
+
+      # ----------------------------
+      # Deploy to gh-pages (keep_files keeps the other languages)
+      # ----------------------------
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site/_site
+          keep_files: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
