@@ -30,6 +30,14 @@ import os
 OUTPUT_DIR = os.getcwd()  # Write to the course repo root
 
 
+class CourseConverter(markdownify.MarkdownConverter):
+    """Keep image captions apart from body text with a kramdown class."""
+
+    def convert_figcaption(self, el, text, *args, **kwargs):
+        text = " ".join(text.split())
+        return f"\n\n{text}\n{{: .figure-caption}}\n\n" if text else ""
+
+
 def pages_api_url(course_url):
     """Build the WP REST pages endpoint from the course URL."""
     return course_url.rstrip("/") + "/wp-json/wp/v2/pages"
@@ -129,7 +137,7 @@ def write_page(page, by_parent, index_map, padding_map, base_dir):
     slug = page.get("slug", f"page-{pid}")
     title = html.unescape(page.get("title", {}).get("rendered", "")).strip()
     html_content = page.get("content", {}).get("rendered", "")
-    md_content = markdownify.markdownify(html_content, heading_style="ATX")
+    md_content = CourseConverter(heading_style="ATX").convert(html_content)
 
     children = sorted(
         by_parent.get(pid, []),
