@@ -9,7 +9,7 @@ Features:
 - Assigns each sibling an index in steps of 10 (010, 020, ...) and zero-pads (min width 3)
 - Creates directories for pages that have children; parent content goes to index.md
 - Child pages (leaf pages) are saved as prefixed files: 010-slug.md
-- Converts HTML -> Markdown using markdownify, keeping image captions and Mol* 3D viewers
+- Converts HTML -> Markdown using markdownify; figures, boxes and Mol* 3D viewers stay as HTML
 - Adds Jekyll front matter (layout + title) to every page
 - Local-only: writes to the current directory (run it from the course repo root)
 
@@ -31,33 +31,50 @@ import os
 OUTPUT_DIR = os.getcwd()  # Write to the course repo root
 
 
-class CourseConverter(markdownify.MarkdownConverter):
-    """Keep image captions apart from body text with a kramdown class."""
+# Markdown cannot express everything the WordPress pages use. These blocks are
+# kept as HTML so they render exactly as on WordPress; the rest becomes Markdown.
 
-    def convert_figcaption(self, el, text, *args, **kwargs):
-        text = " ".join(text.split())
-        return f"\n\n{text}\n{{: .figure-caption}}\n\n" if text else ""
-
-
-# Mol* 3D viewers are pasted in WordPress as whole HTML documents.
+# Mol* 3D viewers, pasted in WordPress as whole HTML documents.
 MOLSTAR_BLOCK = re.compile(r"<!DOCTYPE html>(?:(?!</html>).)*?molstar\.js.*?</html>", re.S | re.I)
 MOLSTAR_WRAPPER = re.compile(r"<!DOCTYPE[^>]*>|</?(?:html|head|body)[^>]*>|<meta[^>]*>|<title>.*?</title>"
                              r"|<link[^>]*rel=\"icon\"[^>]*>|<!-- __MOLSTAR_ANALYTICS__ -->", re.S | re.I)
+# Figures: an image in a styled <div> (size, centring), optionally followed by its caption.
+FIGURE_BLOCK = re.compile(r"<div style=\"[^\"]*\">\s*<img[^>]*>\s*</div>(?:\s*<figcaption.*?</figcaption>)?", re.S | re.I)
+# Boxes: WordPress tables with a single cell, used to frame a block of text.
+BOX_BLOCK = re.compile(r"<figure class=\"wp-block-table\">\s*<table[^>]*>\s*<tbody>\s*<tr>\s*<td>"
+                       r"((?:(?!</td>).)*)</td>\s*</tr>\s*</tbody>\s*</table>\s*</figure>", re.S | re.I)
+
+
+def keep_molstar(match):
+    block = MOLSTAR_WRAPPER.sub("", match.group(0))
+    return f'<div class="molstar-viewer">\n{block}\n</div>'
+
+
+def keep_box(match):
+    return f'<div class="vf-box vf-box--outline">\n<p>{match.group(1).strip()}</p>\n</div>'
 
 
 def to_markdown(html_content):
-    """Convert page HTML to Markdown, keeping Mol* viewers as raw HTML."""
-    viewers = []
+    """Convert page HTML to Markdown, keeping what Markdown cannot express as HTML."""
+    kept = []
 
-    def keep(match):
-        block = MOLSTAR_WRAPPER.sub("", match.group(0))
-        block = "\n".join(line for line in block.splitlines() if line.strip())
-        viewers.append(f'{{% raw %}}\n<div class="molstar-viewer">\n{block}\n</div>\n{{% endraw %}}')
-        return f"<p>MOLSTARVIEWER{len(viewers) - 1}</p>"
+    def keep(transform):
+        def replace(match):
+            block = transform(match)
+            block = "\n".join(line for line in block.splitlines() if line.strip())
+            if "{{" in block or "{%" in block:
+                block = f"{{% raw %}}\n{block}\n{{% endraw %}}"
+            kept.append(block)
+            return f"<p>KEPTHTMLBLOCK{len(kept) - 1}</p>"
+        return replace
 
-    md = CourseConverter(heading_style="ATX").convert(MOLSTAR_BLOCK.sub(keep, html_content))
-    for i, viewer in enumerate(viewers):
-        md = md.replace(f"MOLSTARVIEWER{i}", viewer, 1)
+    html_content = MOLSTAR_BLOCK.sub(keep(keep_molstar), html_content)
+    html_content = FIGURE_BLOCK.sub(keep(lambda m: m.group(0)), html_content)
+    html_content = BOX_BLOCK.sub(keep(keep_box), html_content)
+
+    md = markdownify.markdownify(html_content, heading_style="ATX", sub_symbol="<sub>", sup_symbol="<sup>")
+    for i, block in enumerate(kept):
+        md = md.replace(f"KEPTHTMLBLOCK{i}", block, 1)
     return md
 
 

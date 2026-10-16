@@ -7,7 +7,7 @@
 	{% assign t = site.data[lang] | default: site.data['en'] %}
 	{% assign course_slug = t.course.slug %}
 	<title>{{ t.course.title }} | EMBL-EBI Training</title>
-	<link rel="stylesheet" href="https://assets.emblstatic.net/vf/v2.5.25/css/styles.css" type="text/css">
+	<link rel="stylesheet" href="https://assets.emblstatic.net/vf/v2.5.26/css/styles.css" type="text/css">
 
 	<link rel="stylesheet" href="https://ebi.emblstatic.net/web_guidelines/EBI-Icon-fonts/v1.3/fonts.css" type="text/css"
 		media="all" />
@@ -48,11 +48,14 @@
 			display: table-cell;
 		}
 
-		.figure-caption {
-			text-align: center;
-			color: #54585a;
-			font-size: 16px;
-			margin: 0.5em 20px 1.5em;
+		/* Same spacing between paragraphs, lists and headings as the WordPress course pages */
+		.acc {
+			--vf-stack-margin: 2rem;
+		}
+
+		.acc .vf-box {
+			--vf-stack-margin: 0;
+			border-width: 1px;
 		}
 	</style>
 </head>
@@ -407,7 +410,7 @@
 				</div>
 		</div>
 		</main>
-		<script src="https://assets.emblstatic.net/vf/v2.5.25/scripts/scripts.js"></script>
+		<script src="https://assets.emblstatic.net/vf/v2.5.26/scripts/scripts.js"></script>
 	</div>
 
 	</div>
