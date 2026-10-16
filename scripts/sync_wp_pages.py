@@ -40,6 +40,8 @@ MOLSTAR_WRAPPER = re.compile(r"<!DOCTYPE[^>]*>|</?(?:html|head|body)[^>]*>|<meta
                              r"|<link[^>]*rel=\"icon\"[^>]*>|<!-- __MOLSTAR_ANALYTICS__ -->", re.S | re.I)
 # Figures: an image in a styled <div> (size, centring), optionally followed by its caption.
 FIGURE_BLOCK = re.compile(r"<div style=\"[^\"]*\">\s*<img[^>]*>\s*</div>(?:\s*<figcaption.*?</figcaption>)?", re.S | re.I)
+# Broken images in WordPress (no real URL in src) show nothing; drop them.
+BROKEN_IMAGE = re.compile(r"<img(?![^>]*\bsrc=\"(?:https?:)?/)[^>]*>", re.I)
 # Boxes: WordPress tables with a single cell, used to frame a block of text.
 BOX_BLOCK = re.compile(r"<figure class=\"wp-block-table\">\s*<table[^>]*>\s*<tbody>\s*<tr>\s*<td>"
                        r"((?:(?!</td>).)*)</td>\s*</tr>\s*</tbody>\s*</table>\s*</figure>", re.S | re.I)
@@ -68,6 +70,7 @@ def to_markdown(html_content):
             return f"<p>KEPTHTMLBLOCK{len(kept) - 1}</p>"
         return replace
 
+    html_content = BROKEN_IMAGE.sub("", html_content)
     html_content = MOLSTAR_BLOCK.sub(keep(keep_molstar), html_content)
     html_content = FIGURE_BLOCK.sub(keep(lambda m: m.group(0)), html_content)
     html_content = BOX_BLOCK.sub(keep(keep_box), html_content)
