@@ -9,7 +9,7 @@ Features:
 - Assigns each sibling an index in steps of 10 (010, 020, ...) and zero-pads (min width 3)
 - Creates directories for pages that have children; parent content goes to index.md
 - Child pages (leaf pages) are saved as prefixed files: 010-slug.md
-- Converts HTML -> Markdown using markdownify
+- Converts HTML -> Markdown using markdownify, keeping image captions and Mol* 3D viewers
 - Adds Jekyll front matter (layout + title) to every page
 - Local-only: writes to the current directory (run it from the course repo root)
 
@@ -18,6 +18,7 @@ Usage:
 """
 
 import html
+import re
 import requests
 import shutil
 import sys
@@ -36,6 +37,28 @@ class CourseConverter(markdownify.MarkdownConverter):
     def convert_figcaption(self, el, text, *args, **kwargs):
         text = " ".join(text.split())
         return f"\n\n{text}\n{{: .figure-caption}}\n\n" if text else ""
+
+
+# Mol* 3D viewers are pasted in WordPress as whole HTML documents.
+MOLSTAR_BLOCK = re.compile(r"<!DOCTYPE html>(?:(?!</html>).)*?molstar\.js.*?</html>", re.S | re.I)
+MOLSTAR_WRAPPER = re.compile(r"<!DOCTYPE[^>]*>|</?(?:html|head|body)[^>]*>|<meta[^>]*>|<title>.*?</title>"
+                             r"|<link[^>]*rel=\"icon\"[^>]*>|<!-- __MOLSTAR_ANALYTICS__ -->", re.S | re.I)
+
+
+def to_markdown(html_content):
+    """Convert page HTML to Markdown, keeping Mol* viewers as raw HTML."""
+    viewers = []
+
+    def keep(match):
+        block = MOLSTAR_WRAPPER.sub("", match.group(0))
+        block = "\n".join(line for line in block.splitlines() if line.strip())
+        viewers.append(f'{{% raw %}}\n<div class="molstar-viewer">\n{block}\n</div>\n{{% endraw %}}')
+        return f"<p>MOLSTARVIEWER{len(viewers) - 1}</p>"
+
+    md = CourseConverter(heading_style="ATX").convert(MOLSTAR_BLOCK.sub(keep, html_content))
+    for i, viewer in enumerate(viewers):
+        md = md.replace(f"MOLSTARVIEWER{i}", viewer, 1)
+    return md
 
 
 def pages_api_url(course_url):
@@ -137,7 +160,7 @@ def write_page(page, by_parent, index_map, padding_map, base_dir):
     slug = page.get("slug", f"page-{pid}")
     title = html.unescape(page.get("title", {}).get("rendered", "")).strip()
     html_content = page.get("content", {}).get("rendered", "")
-    md_content = CourseConverter(heading_style="ATX").convert(html_content)
+    md_content = to_markdown(html_content)
 
     children = sorted(
         by_parent.get(pid, []),
