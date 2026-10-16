@@ -48,8 +48,9 @@
 			display: table-cell;
 		}
 
-		/* Same spacing between paragraphs, lists and headings as the WordPress course pages */
-		.acc {
+		/* Same spacing between paragraphs, lists and headings as the WordPress course pages
+		   (the course landing page keeps the default spacing, as on the original) */
+		.acc:not(.acc--landing) {
 			--vf-stack-margin: 2rem;
 		}
 
@@ -271,7 +272,7 @@
 
 											</div>
 											<!-- Sidebar end -->
-											<div class="acc">
+											<div class="acc{% if page.landing %} acc--landing{% endif %}">
 												<div class="vf-u-margin__top--500"></div>
 												{{ content }}
 
