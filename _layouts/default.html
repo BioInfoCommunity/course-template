@@ -101,6 +101,10 @@
 										<section class="embl-grid">
 											<div class="embl-training__sidebar">
 												<div class="vf-u-margin__top--500"></div>
+												<p class="vf-u-type__text-body--3 vf-u-margin--0">
+													<a class="vf-link vf-link--primary" href="https://www.ebi.ac.uk/training/">&larr; {{ t.labels.back_to_training_text | default: "Back to EMBL-EBI Training" }}</a>
+												</p>
+												<div class="vf-u-margin__top--500"></div>
 												<figure class="vf-figure ebi-academy-book-cover-image">
 
 													<img class="vf-figure__image"
@@ -129,6 +133,7 @@
 														{% else %}
 														{{ author.name }}
 														{% endif %}
+														{% if author.orcid %}<a href="{{ author.orcid }}" title="ORCID" style="display:inline-block;vertical-align:middle;margin-left:4px;line-height:0"><img src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" alt="ORCID iD of {{ author.name }}" width="16" height="16"></a>{% endif %}
 													</li>
 													{% endfor %}
 												</ul>
@@ -151,6 +156,7 @@
 														{% else %}
 														{{ translator.name }}
 														{% endif %}
+														{% if translator.orcid %}<a href="{{ translator.orcid }}" title="ORCID" style="display:inline-block;vertical-align:middle;margin-left:4px;line-height:0"><img src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" alt="ORCID iD of {{ translator.name }}" width="16" height="16"></a>{% endif %}
 													</li>
 													{% endfor %}
 												</ul>
@@ -234,7 +240,31 @@
 																				aria-role="treeitem" aria-expanded="">
 																				<a class="vf-tree__link" href="/{{ course_slug }}{{ subchild.url }}">
 																					{{ subchild.title }}
+																					{% if subchild.children %}
+																					<button class="vf-button vf-tree__button" data-vf-js-tree--button>
+																						<p data-vf-js-tree-button-hidden-text class="vf-u-sr-only">
+																							Open Tree
+																						</p>
+																						<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+																							<path
+																								d="M19.5,12a2.3,2.3,0,0,1-.78,1.729L7.568,23.54a1.847,1.847,0,0,1-2.439-2.773l9.752-8.579a.25.25,0,0,0,0-.376L5.129,3.233A1.847,1.847,0,0,1,7.568.46l11.148,9.808A2.31,2.31,0,0,1,19.5,12Z" />
+																						</svg>
+																					</button>
+																					{% endif %}
 																				</a>
+
+																				{% if subchild.children %}
+																				<ul class="vf-tree__list vf-tree__list--additional vf-tree__list--4 | vf-list"
+																					aria-role="group">
+																					{% for grandchild in subchild.children %}
+																					<li class="vf-tree__item">
+																						<a class="vf-tree__link" href="/{{ course_slug }}{{ grandchild.url }}">
+																							{{ grandchild.title }}
+																						</a>
+																					</li>
+																					{% endfor %}
+																				</ul>
+																				{% endif %}
 																			</li>
 																			{% endfor %}
 																		</ul>
@@ -309,7 +339,8 @@
 														{% if found_current == false %}
 														{% assign section_url = course_url | append: section.url %}
 
-														{% if current_url == section_url or current_url == section_url | append: '/' %}
+														{% assign section_url_slash = section_url | append: '/' %}
+														{% if current_url == section_url or current_url == section_url_slash %}
 														{% assign found_current = true %}
 														{% else %}
 														{% assign prev_item = section %}
@@ -328,7 +359,8 @@
 														{% if found_current == false %}
 														{% assign child_url = course_url | append: child.url %}
 
-														{% if current_url == child_url or current_url == child_url | append: '/' %}
+														{% assign child_url_slash = child_url | append: '/' %}
+														{% if current_url == child_url or current_url == child_url_slash %}
 														{% assign found_current = true %}
 														{% else %}
 														{% assign prev_item = child %}
@@ -347,7 +379,8 @@
 														{% if found_current == false %}
 														{% assign subchild_url = course_url | append: subchild.url %}
 
-														{% if current_url == subchild_url or current_url == subchild_url | append: '/' %}
+														{% assign subchild_url_slash = subchild_url | append: '/' %}
+														{% if current_url == subchild_url or current_url == subchild_url_slash %}
 														{% assign found_current = true %}
 														{% else %}
 														{% assign prev_item = subchild %}
@@ -358,6 +391,27 @@
 														{% assign next_item = subchild %}
 														{% assign next_url = course_url | append: subchild.url %}
 														{% assign next_title = subchild.title %}
+														{% endif %}
+
+														<!-- Check fourth-level items -->
+														{% if subchild.children %}
+														{% for grandchild in subchild.children %}
+														{% if found_current == false %}
+														{% assign grandchild_url = course_url | append: grandchild.url %}
+														{% assign grandchild_url_slash = grandchild_url | append: '/' %}
+														{% if current_url == grandchild_url or current_url == grandchild_url_slash %}
+														{% assign found_current = true %}
+														{% else %}
+														{% assign prev_item = grandchild %}
+														{% assign prev_url = grandchild_url %}
+														{% assign prev_title = grandchild.title %}
+														{% endif %}
+														{% elsif found_current == true and next_item == nil %}
+														{% assign next_item = grandchild %}
+														{% assign next_url = course_url | append: grandchild.url %}
+														{% assign next_title = grandchild.title %}
+														{% endif %}
+														{% endfor %}
 														{% endif %}
 														{% endfor %}
 														{% endif %}
