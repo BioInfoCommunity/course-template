@@ -23,7 +23,7 @@ METADATA_FILE_PATTERN = re.compile(r"^_data/[a-z]{2}\.yml$")
 def is_metadata_file(file):
     return bool(METADATA_FILE_PATTERN.match(file))
 
-ALLOWED_EXTENSIONS = {".md", ".jpg", ".jpeg", ".png"}
+ALLOWED_EXTENSIONS = {".md", ".jpg", ".jpeg", ".png", ".pdf"}
 
 errors = []
 warnings = []
