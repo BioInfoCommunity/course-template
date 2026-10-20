@@ -102,7 +102,7 @@
 											<div class="embl-training__sidebar">
 												<div class="vf-u-margin__top--500"></div>
 												<p class="vf-u-type__text-body--3 vf-u-margin--0">
-													<a class="vf-link vf-link--primary" href="https://www.ebi.ac.uk/training/">&larr; {{ t.labels.back_to_training_text | default: "Back to EMBL-EBI Training" }}</a>
+													<a class="vf-link vf-link--primary" href="{{ t.course.training_url | default: 'https://www.ebi.ac.uk/training/' }}">&larr; {{ t.labels.back_to_training_text | default: "Back to EMBL-EBI Training" }}</a>
 												</p>
 												<div class="vf-u-margin__top--500"></div>
 												<figure class="vf-figure ebi-academy-book-cover-image">
