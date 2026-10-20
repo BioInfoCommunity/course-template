@@ -54,6 +54,17 @@
 			--vf-stack-margin: 2rem;
 		}
 
+		.vf-footer__licence {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			margin-block: 16px;
+		}
+
+		.vf-footer__licence p {
+			margin: 0;
+		}
+
 		.acc .vf-box {
 			--vf-stack-margin: 0;
 			border-width: 1px;
@@ -281,23 +292,6 @@
 													</div>
 												</div>
 												<hr class="vf-divider vf-u-margin__bottom-md">
-												<p>
-													<a href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons"
-															src="http://trainingcontent.embl.org/themes/custom/ebi_academy/images/CC_BY.png"
-															style="width: 125px; height: 44px;" width="125" height="44"></a>
-												</p>
-												<p class="vf-u-type__text-body--3">
-													{% if t.labels.license_html %}
-													{{ t.labels.license_html }}
-													{% else %}
-													All materials are free cultural works licensed under a Creative Commons
-													<a href="https://creativecommons.org/licenses/by/4.0/"
-														class="vf-link vf-link--primary  vf-u-margin--0" style="display:inline">Attribution 4.0
-														International (CC BY 4.0) license</a>, except where further licensing details are provided.
-													{% endif %}
-												</p>
-												<div class="vf-u-margin__top--500"></div>
-												<hr class="vf-divider vf-u-margin__bottom-md">
 
 
 											</div>
@@ -479,6 +473,14 @@
 				</a>
 				<p class="vf-footer__notice">BioInfoTraining-Community - A community driven collaborative platform where members
 					can contribute to the translations of the existing content or submit their specific use cases.</p>
+			</div>
+			<div class="vf-footer__licence">
+				<a href="https://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Attribution 4.0"
+						src="https://trainingcontent.embl.org/themes/custom/ebi_academy/images/CC_BY.png"
+						width="88" height="31"></a>
+				<p class="vf-footer__notice">All materials are free cultural works licensed under a Creative Commons
+					<a class="vf-footer__link vf-u-text-color--white" href="https://creativecommons.org/licenses/by/4.0/">Attribution 4.0
+						International (CC BY 4.0) license</a>, except where further licensing details are provided.</p>
 			</div>
 			<section class="vf-footer__legal vf-grid__col--span-all | vf-grid vf-grid__col-1">
 				<span class="vf-footer__link vf-u-text-color--grey--lightest">Copyright © BioInfoTraining-Community</span>
