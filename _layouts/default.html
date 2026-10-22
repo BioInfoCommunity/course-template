@@ -107,7 +107,7 @@
 								<div class="vf-body">
 									<section class="vf-hero | vf-u-fullbleed" style="background:none;">
 										<div class="vf-hero__content | vf-box | vf-stack vf-stack--400" style="min-width:350px">
-											<p class="vf-hero__kicker"><span style="text-transform:uppercase">{{ t.course.hero_kicker_text }}</span>{% if t.course.space_url %} | <a class="vf-link" href="{{ t.course.space_url }}">{{ t.course.space_text | default: "Back to the community space" }}</a>{% endif %}</p>
+											<p class="vf-hero__kicker">{% if t.course.space_url %}<a class="vf-link" href="{{ t.course.space_url }}">{{ t.course.space_text | default: "Community space" }}</a> | {% endif %}<span style="text-transform:uppercase">{{ t.course.hero_kicker_text }}</span></p>
 											<h2 id="course_title" class="vf-hero__heading">{{ t.course.title }}</h2>
 											<p class="vf-hero__subheading">{{ t.course.subtitle }}</p>
 										</div>

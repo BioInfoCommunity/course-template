@@ -31,7 +31,7 @@ Besides the usual course fields, `_data/<lang>.yml` needs `course.image` and a
 `languages` list (`code` + `name`) for the language menu.
 
 Optional: `course.space_url` (and `course.space_text`) adds a link to the course's
-community space next to the hero kicker, e.g. "Online tutorial | Back to the AlphaFold space".
+community space before the hero kicker, e.g. "AlphaFold & structural biology | Online tutorial".
 
 To sync pages from WordPress, run from the course repo root:
 
